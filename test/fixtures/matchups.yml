@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  player1_id: 1
+  player2_id: 1
+  player1_response: MyString
+  player2_response: MyString
+  prompt: MyString
+  round: one
+
+two:
+  player1_id: 1
+  player2_id: 1
+  player1_response: MyString
+  player2_response: MyString
+  prompt: MyString
+  round: two
