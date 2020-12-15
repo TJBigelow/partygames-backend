@@ -7,8 +7,13 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 require 'rest-client'
 
-resp = JSON.parse(RestClient.get 'https://cah.greencoaststudios.com/api/v1/official/main_deck')['black']
+black = JSON.parse(RestClient.get 'https://cah.greencoaststudios.com/api/v1/official/main_deck')['black']
+white = JSON.parse(RestClient.get 'https://cah.greencoaststudios.com/api/v1/official/main_deck')['white']
 
-resp.each do |card|
+black.each do |card|
     Prompt.create(text: card['content']) if card['pick'] == 1
+end
+
+white.each do |card|
+    BotResponse.create(text: card)
 end

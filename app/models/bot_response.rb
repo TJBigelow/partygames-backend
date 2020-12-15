@@ -1,0 +1,2 @@
+class BotResponse < ApplicationRecord
+end

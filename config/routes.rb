@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :bot_responses
   resources :players
   resources :prompts
   resources :matchups

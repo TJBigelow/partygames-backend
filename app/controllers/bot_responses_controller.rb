@@ -1,0 +1,2 @@
+class BotResponsesController < ApplicationController
+end
