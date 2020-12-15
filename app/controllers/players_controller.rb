@@ -4,6 +4,12 @@ class PlayersController < ApplicationController
         render json: players
     end
 
+
+    def show
+        player = Player.find(params[:id])
+        render json: player
+    end
+
     def create
         game = Game.find_by(code: params[:game])
         player = game.players.new(username: params[:username])
