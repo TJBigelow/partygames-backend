@@ -6,7 +6,13 @@ class PlayersController < ApplicationController
 
     def create
         game = Game.find_by(code: params[:game])
-        player = game.players.create(username: params[:username])
+        player = game.players.new(username: params[:username])
+        if player.save
+            GamesChannel.broadcast_to( game, {
+                code: game.code,
+                players: game.players
+            })
+        end
         render json: player
     end
 end
