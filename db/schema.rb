@@ -23,8 +23,9 @@ ActiveRecord::Schema.define(version: 2020_12_14_213225) do
 
   create_table "games", force: :cascade do |t|
     t.string "code"
-    t.boolean "started"
+    t.boolean "started", default: false
     t.string "active_phase"
+    t.integer "timer", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
