@@ -23,7 +23,7 @@ class GamesController < ApplicationController
             game.create_matchups
             game.update(started: true)
             # render json: game
-            game.start_game
+            game.run_game
         else
             render json: {error: 'Game has already started'}
         end

@@ -19,6 +19,7 @@ class PlayersController < ApplicationController
                 code: game.code,
                 players: game.players,
                 started: game.started,
+                active_phase: game.active_phase,
                 timer: game.timer,
             })
         end
