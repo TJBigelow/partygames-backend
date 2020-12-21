@@ -11,8 +11,8 @@ class PlayersController < ApplicationController
     end
 
     def create
-        game = Game.find_by(code: params[:game])
-        player = game.players.new(username: params[:username]) unless game.started
+        game = Game.find_by(code: player_params[:game])
+        player = game.players.new(username: player_params[:username]) unless game.started
         if player.save
             GamesChannel.broadcast_to( game, {
                 # id: game.id,
@@ -24,5 +24,11 @@ class PlayersController < ApplicationController
             })
         end
         render json: player
+    end
+
+    private
+
+    def player_params
+        params.permit(:game, :username)
     end
 end
