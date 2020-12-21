@@ -1,6 +1,6 @@
 class Game < ApplicationRecord
-    has_many :rounds
-    has_many :players
+    has_many :rounds, :dependent => :delete_all
+    has_many :players, :dependent => :delete_all
     has_many :matchups, through: :rounds
 
     def create_matchups
@@ -32,52 +32,85 @@ class Game < ApplicationRecord
 
     def run_game
         self.update(active_phase: 'starting')
-        self.set_timer(5)
+        GamesChannel.broadcast_to( self, { 
+            players: self.players,
+            started: self.started
+        })
+        self.set_timer(duration: 5)
         self.start_game
         self.round(1)
-        self.set_timer(5)
+        self.set_timer(duration: 10)
+        self.round_recap(1)
         self.round(2)
-        self.set_timer(5)
+        self.set_timer(duration: 10)
+        self.round_recap(2)
         self.round(3)
-        self.set_timer(5)
+        self.set_timer(duration: 10)
+        self.round_recap(3)
+        # self.destroy
     end
 
     def start_game
         self.players.each do |player|
             PlayersChannel.broadcast_to( player, {
+                active_phase: self.active_phase,
                 message: 'The game has begun'
             })
         end
     end
 
     def round (round_number)
-        self.update(active_phase: "round #{round_number}")
+        self.update(active_phase: "submissions")
         GamesChannel.broadcast_to( self, {
-            id: self.id,
-            code: self.code,
-            players: self.players,
-            started: self.started,
+            # id: self.id,
+            # code: self.code,
+            # players: self.players,
+            # started: self.started,
             active_phase: self.active_phase,
-            timer: self.timer-1
+            # timer: self.timer-1,
+            round: round_number,
         })
         self.players.each do |player|
             matchup = player.matchups.find{|matchup| matchup.round.round_number == round_number}
             prompt = matchup.prompt
             player_number =  matchup.player1 == player ? 'player1' : 'player2'
-            PlayersChannel.broadcast_to( player, {prompt: prompt, matchup: matchup.id, player_number: player_number, round_number: round_number})
+            PlayersChannel.broadcast_to( player, { active_phase: self.active_phase, prompt: prompt, matchup: matchup.id, player_number: player_number, round_number: round_number})
         end
     end
 
-    def set_timer (duration)
+    def round_recap (round_number)
+        self.update(active_phase: "recap")
+        self.players.each do |player|
+            PlayersChannel.broadcast_to( player, { active_phase: self.active_phase, message: 'This is where you would vote'}) 
+        end
+        round = self.rounds.find_by(round_number: round_number)
+        round.matchups.each do |matchup|
+            GamesChannel.broadcast_to( self, {
+                # id: self.id,
+                # code: self.code,
+                # players: self.players,
+                # started: self.started,
+                active_phase: self.active_phase,
+                # timer: self.timer-1,
+                round: round_number,
+                matchup: matchup,
+            })
+            self.set_timer(duration: 10, round_number: round_number, matchup: matchup)
+        end
+    end
+
+    def set_timer (duration:, round_number: nil, matchup: nil)
         self.update(timer: duration + 1)
         while timer > 0
             GamesChannel.broadcast_to( self, {
-                id: self.id,
-                code: self.code,
-                players: self.players,
-                started: self.started,
+                # id: self.id,
+                # code: self.code,
+                # players: self.players,
+                # started: self.started,
                 active_phase: self.active_phase,
-                timer: self.timer-1
+                timer: self.timer-1,
+                round: round_number,
+                matchup: matchup,
             })
             self.update(timer: (timer-1))
             sleep(1) unless self.timer === 0
