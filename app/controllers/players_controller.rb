@@ -15,12 +15,7 @@ class PlayersController < ApplicationController
         player = game.players.new(username: player_params[:username]) unless game.started
         if player.save
             GamesChannel.broadcast_to( game, {
-                # id: game.id,
-                # code: game.code,
                 players: game.players,
-                # started: game.started,
-                # active_phase: game.active_phase,
-                # timer: game.timer,
             })
         end
         render json: player

@@ -62,12 +62,7 @@ class Game < ApplicationRecord
     def round (round_number)
         self.update(active_phase: "submissions")
         GamesChannel.broadcast_to( self, {
-            # id: self.id,
-            # code: self.code,
-            # players: self.players,
-            # started: self.started,
             active_phase: self.active_phase,
-            # timer: self.timer-1,
             round: round_number,
         })
         self.players.each do |player|
@@ -86,12 +81,7 @@ class Game < ApplicationRecord
         round = self.rounds.find_by(round_number: round_number)
         round.matchups.each do |matchup|
             GamesChannel.broadcast_to( self, {
-                # id: self.id,
-                # code: self.code,
-                # players: self.players,
-                # started: self.started,
                 active_phase: self.active_phase,
-                # timer: self.timer-1,
                 round: round_number,
                 matchup: matchup,
             })
@@ -103,10 +93,6 @@ class Game < ApplicationRecord
         self.update(timer: duration + 1)
         while timer > 0
             GamesChannel.broadcast_to( self, {
-                # id: self.id,
-                # code: self.code,
-                # players: self.players,
-                # started: self.started,
                 active_phase: self.active_phase,
                 timer: self.timer-1,
                 round: round_number,
