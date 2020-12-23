@@ -75,11 +75,23 @@ class Game < ApplicationRecord
 
     def round_recap (round_number)
         self.update(active_phase: "recap")
-        self.players.each do |player|
-            PlayersChannel.broadcast_to( player, { active_phase: self.active_phase, message: 'This is where you would vote'}) 
-        end
         round = self.rounds.find_by(round_number: round_number)
         round.matchups.each do |matchup|
+            voters = self.players.reject{|player| player.matchups.include?(matchup)}
+            self.players.each do |player|
+                if player.matchups.include?(matchup)
+                    PlayersChannel.broadcast_to( player, {
+                        active_phase: "self vote",
+                        message: "You can't vote for yourself"
+                    })
+                else
+                    PlayersChannel.broadcast_to( player, {
+                        active_phase: self.active_phase,
+                        matchup: matchup,
+                        voter_id: player.id
+                    })
+                end
+            end
             GamesChannel.broadcast_to( self, {
                 active_phase: self.active_phase,
                 round: round_number,
