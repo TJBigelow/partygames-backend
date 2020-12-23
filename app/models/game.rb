@@ -40,13 +40,13 @@ class Game < ApplicationRecord
         self.start_game
         self.round(1)
         self.set_timer(duration: 30)
-        self.round_recap(1)
+        self.round_voting(1)
         self.round(2)
         self.set_timer(duration: 30)
-        self.round_recap(2)
+        self.round_voting(2)
         self.round(3)
         self.set_timer(duration: 30)
-        self.round_recap(3)
+        self.round_voting(3)
         # self.destroy
     end
 
@@ -73,32 +73,55 @@ class Game < ApplicationRecord
         end
     end
 
-    def round_recap (round_number)
-        self.update(active_phase: "recap")
+    def round_voting (round_number)
+        
         round = self.rounds.find_by(round_number: round_number)
         round.matchups.each do |matchup|
-            voters = self.players.reject{|player| player.matchups.include?(matchup)}
-            self.players.each do |player|
-                if player.matchups.include?(matchup)
-                    PlayersChannel.broadcast_to( player, {
-                        active_phase: "self vote",
-                        message: "You can't vote for yourself"
-                    })
-                else
-                    PlayersChannel.broadcast_to( player, {
-                        active_phase: self.active_phase,
-                        matchup: matchup,
-                        voter_id: player.id
-                    })
-                end
-            end
-            GamesChannel.broadcast_to( self, {
-                active_phase: self.active_phase,
-                round: round_number,
-                matchup: matchup,
-            })
-            self.set_timer(duration: 15, round_number: round_number, matchup: matchup)
+            self.update(active_phase: "voting")
+            self.matchup_voting(matchup, round_number)
+            self.update(active_phase: "recap")
+            self.matchup_recap(matchup, round_number)
         end
+    end
+
+    def matchup_voting(matchup, round_number)
+        self.players.each do |player|
+            if player.matchups.include?(matchup)
+                PlayersChannel.broadcast_to( player, {
+                    active_phase: "self vote",
+                    message: "You can't vote for yourself"
+                })
+            else
+                PlayersChannel.broadcast_to( player, {
+                    active_phase: self.active_phase,
+                    matchup: matchup,
+                    voter_id: player.id
+                })
+            end
+        end
+        GamesChannel.broadcast_to( self, {
+            active_phase: self.active_phase,
+            round: round_number,
+            matchup: matchup,
+        })
+        self.set_timer(duration: 15, round_number: round_number, matchup: matchup)
+    end
+
+    def matchup_recap(matchup, round_number)
+        self.players.each do |player|
+            PlayersChannel.broadcast_to( player, {
+                active_phase: self.active_phase,
+                message: "Wait for next matchup"
+            })
+        end
+        GamesChannel.broadcast_to( self, {
+            active_phase: self.active_phase,
+            round: round_number,
+            matchup: matchup,
+            player1_votes: matchup.votes.count{|vote| vote.recipient_id === matchup.player1_id},
+            player2_votes: matchup.votes.count{|vote| vote.recipient_id === matchup.player2_id},
+        })
+        self.set_timer(duration: 15, round_number: round_number, matchup: matchup)
     end
 
     def set_timer (duration:, round_number: nil, matchup: nil)
