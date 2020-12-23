@@ -1,3 +1,3 @@
 class PlayerSerializer < ActiveModel::Serializer
-  attributes :id, :username, :isbot, :matchups, :game
+  attributes :id, :username, :isbot, :matchups, :game, :score
 end

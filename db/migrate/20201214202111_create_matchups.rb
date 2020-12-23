@@ -5,8 +5,6 @@ class CreateMatchups < ActiveRecord::Migration[6.0]
       t.integer :player2_id
       t.string :player1_response, :default => ''
       t.string :player2_response, :default => ''
-      t.integer :player1_votes, :default => 0
-      t.integer :player2_votes, :default => 0
       t.string :prompt
       t.references :round, null: false, foreign_key: true
 

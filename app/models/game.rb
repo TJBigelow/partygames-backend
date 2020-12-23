@@ -39,13 +39,13 @@ class Game < ApplicationRecord
         self.set_timer(duration: 5)
         self.start_game
         self.round(1)
-        self.set_timer(duration: 10)
+        self.set_timer(duration: 30)
         self.round_recap(1)
         self.round(2)
-        self.set_timer(duration: 10)
+        self.set_timer(duration: 30)
         self.round_recap(2)
         self.round(3)
-        self.set_timer(duration: 10)
+        self.set_timer(duration: 30)
         self.round_recap(3)
         # self.destroy
     end
@@ -85,7 +85,7 @@ class Game < ApplicationRecord
                 round: round_number,
                 matchup: matchup,
             })
-            self.set_timer(duration: 10, round_number: round_number, matchup: matchup)
+            self.set_timer(duration: 15, round_number: round_number, matchup: matchup)
         end
     end
 
