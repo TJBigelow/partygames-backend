@@ -39,17 +39,17 @@ class Game < ApplicationRecord
         self.set_timer(duration: 5)
         self.start_game
         self.round(1)
-        self.set_timer(duration: 10)
+        self.set_timer(duration: 30)
         self.round_voting(1)
         self.score_recap
         self.set_timer(duration: 10)
         self.round(2)
-        self.set_timer(duration: 10)
+        self.set_timer(duration: 30)
         self.round_voting(2)
         self.score_recap
         self.set_timer(duration: 10)
         self.round(3)
-        self.set_timer(duration: 10)
+        self.set_timer(duration: 30)
         self.round_voting(3)
         self.score_recap
         self.set_timer(duration: 10)
@@ -109,7 +109,7 @@ class Game < ApplicationRecord
             round: round_number,
             matchup: matchup,
         })
-        self.set_timer(duration: 10, round_number: round_number, matchup: matchup)
+        self.set_timer(duration: 30, round_number: round_number, matchup: matchup)
     end
 
     def matchup_recap(matchup, round_number)
@@ -126,7 +126,7 @@ class Game < ApplicationRecord
             player1_votes: matchup.votes.count{|vote| vote.recipient_id === matchup.player1_id},
             player2_votes: matchup.votes.count{|vote| vote.recipient_id === matchup.player2_id},
         })
-        self.set_timer(duration: 5, round_number: round_number, matchup: matchup)
+        self.set_timer(duration: 10, round_number: round_number, matchup: matchup)
     end
 
     def score_recap
