@@ -27,4 +27,9 @@ class GamesController < ApplicationController
             render json: {error: 'Game has already started'}
         end
     end
+
+    def watch
+        game = Game.find_by(code: params[:code])
+        render json: game
+    end
 end
