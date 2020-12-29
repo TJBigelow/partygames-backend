@@ -42,17 +42,17 @@ class Game < ApplicationRecord
         self.set_timer(duration: 30)
         self.round_voting(1)
         self.score_recap
-        self.set_timer(duration: 10)
+        self.set_timer(duration: 10, round_number: 1)
         self.round(2)
         self.set_timer(duration: 30)
         self.round_voting(2)
         self.score_recap
-        self.set_timer(duration: 10)
+        self.set_timer(duration: 10, round_number: 2)
         self.round(3)
         self.set_timer(duration: 30)
         self.round_voting(3)
         self.score_recap
-        self.set_timer(duration: 10)
+        self.set_timer(duration: 10, round_number: 3)
         # self.destroy
     end
 
