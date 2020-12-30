@@ -55,7 +55,8 @@ class Game < ApplicationRecord
         self.round_voting(3)
         self.score_recap
         self.set_timer(duration: 10, round_number: 3)
-        # self.destroy
+        self.rounds.destroy_all
+        self.destroy
     end
 
     def start_game

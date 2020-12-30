@@ -18,8 +18,9 @@ class PlayersController < ApplicationController
                 players: game.players,
             })
             render json: player
+        else
+            render json: { errors: player.errors.full_messages }
         end
-        render json: { errors: player.errors.full_messages }
     end
 
     private
