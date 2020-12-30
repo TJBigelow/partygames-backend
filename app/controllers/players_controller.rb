@@ -17,8 +17,9 @@ class PlayersController < ApplicationController
             GamesChannel.broadcast_to( game, {
                 players: game.players,
             })
+            render json: player
         end
-        render json: player
+        render json: { errors: player.errors.full_messages }
     end
 
     private

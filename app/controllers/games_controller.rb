@@ -12,8 +12,12 @@ class GamesController < ApplicationController
     end
 
     def create
-        code = Array.new(4) { Array('A'..'Z').sample }.join
-        game = Game.create(code: code)
+        unique = false
+        while unique === false
+            code = Array.new(4) { Array('A'..'Z').sample }.join
+            game = Game.new(code: code)
+            unique = true if game.save
+        end
         render json: game
     end
 

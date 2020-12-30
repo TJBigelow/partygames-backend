@@ -3,6 +3,8 @@ class Game < ApplicationRecord
     has_many :players, :dependent => :delete_all
     has_many :matchups, through: :rounds
 
+    validates :code, uniqueness: true
+
     def create_matchups
         players = self.players.to_a
         if players.length < 4
