@@ -78,7 +78,13 @@ class Game < ApplicationRecord
             matchup = player.matchups.find{|matchup| matchup.round.round_number == round_number}
             prompt = matchup.prompt
             player_number =  matchup.player1 == player ? 'player1' : 'player2'
-            PlayersChannel.broadcast_to( player, { active_phase: self.active_phase, prompt: prompt, matchup: matchup.id, player_number: player_number, round_number: round_number})
+            PlayersChannel.broadcast_to( player, { 
+                active_phase: self.active_phase, 
+                prompt: prompt, 
+                matchup: matchup.id, 
+                player_number: player_number, 
+                round_number: round_number
+            })
         end
     end
 
@@ -138,6 +144,11 @@ class Game < ApplicationRecord
             active_phase: self.active_phase,
             players: self.players.map {|player| {id: player.id, username: player.username, score: player.score, isbot: player.isbot}},
         })
+        self.players.each do |player|
+            PlayersChannel.broadcast_to( player, {
+                active_phase: self.active_phase,
+            })
+        end
     end
 
     def set_timer (duration:, round_number: nil, matchup: nil)
