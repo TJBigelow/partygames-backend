@@ -19,7 +19,7 @@ class Game < ApplicationRecord
         3.times do |i|
             round = self.rounds.create(round_number: i+1)
             two_rows = [[fixed_player]+players[0..players.size/2-1], players[players.size/2..-1].reverse]
-            pairs = two_rows.transpose.shuffle # the shuffle is optional, just cosmetic
+            pairs = two_rows.transpose.shuffle
             pairs.each do |pair|
                 p1resp = '' 
                 p2resp = '' 
@@ -44,17 +44,17 @@ class Game < ApplicationRecord
         self.set_timer(duration: 30)
         self.round_voting(1)
         self.score_recap
-        self.set_timer(duration: 10, round_number: 1)
+        self.set_timer(duration: 5, round_number: 1)
         self.round(2)
         self.set_timer(duration: 30)
         self.round_voting(2)
         self.score_recap
-        self.set_timer(duration: 10, round_number: 2)
+        self.set_timer(duration: 5, round_number: 2)
         self.round(3)
         self.set_timer(duration: 30)
         self.round_voting(3)
         self.score_recap
-        self.set_timer(duration: 10, round_number: 3)
+        self.set_timer(duration: 5, round_number: 3)
         self.rounds.destroy_all
         self.destroy
     end
@@ -118,7 +118,7 @@ class Game < ApplicationRecord
             round: round_number,
             matchup: matchup,
         })
-        self.set_timer(duration: 30, round_number: round_number, matchup: matchup)
+        self.set_timer(duration: 15, round_number: round_number, matchup: matchup)
     end
 
     def matchup_recap(matchup, round_number)
